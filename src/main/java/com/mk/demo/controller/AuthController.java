@@ -4,6 +4,7 @@ import com.mk.demo.entity.User;
 import com.mk.demo.service.JwtService;
 import com.mk.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
@@ -26,7 +28,7 @@ public class AuthController {
     public String login(@RequestBody User user) {
         User dbUser = userService.findByUsername(user.getUsername());
 
-        if (!dbUser.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 

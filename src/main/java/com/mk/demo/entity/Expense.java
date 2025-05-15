@@ -1,14 +1,17 @@
 package com.mk.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 // Using Lombok to reduce boilerplate code (getters, setters, constructors)
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "expenses")
 public class Expense {
