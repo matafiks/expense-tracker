@@ -1,6 +1,7 @@
 package com.mk.demo.controller;
 
 import com.mk.demo.entity.User;
+import com.mk.demo.service.JwtService;
 import com.mk.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +16,11 @@ public class UserController {
 
     private final UserService userService;
 
-    // dont need it as im using Lombok with @RequiredArgsConstructor but want to keep it to remember
+    // don't need it as im using Lombok with @RequiredArgsConstructor but want to keep it to remember
     /*@Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }*/
-
-    @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userService.save(user);
-    }
 
     @GetMapping("/{userId}")
     public User getUser(@PathVariable Long userId) {
