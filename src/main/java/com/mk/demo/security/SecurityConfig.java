@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // allow full access to /auth/register and /auth/login to anyone
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // deny access for not authenticated users to all other endpoints
                         .anyRequest().authenticated()
                 )

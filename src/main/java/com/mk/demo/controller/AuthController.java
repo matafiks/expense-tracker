@@ -3,6 +3,7 @@ package com.mk.demo.controller;
 import com.mk.demo.entity.User;
 import com.mk.demo.service.JwtService;
 import com.mk.demo.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,11 +20,13 @@ public class AuthController {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
+    @Operation(summary = "Register new user")
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return userService.save(user);
     }
 
+    @Operation(summary = "Login into an existing account")
     @PostMapping("/login")
     public String login(@RequestBody User user) {
         User dbUser = userService.findByUsername(user.getUsername());
