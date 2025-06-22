@@ -4,14 +4,16 @@ package com.mk.demo.controller;
 import com.mk.demo.entity.Expense;
 import com.mk.demo.service.ExpenseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Expense REST API endpoints", description = "Operations related to expensions")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/expenses")
+@RequestMapping("/api/expenses")
 public class ExpenseController {
 
     private final ExpenseService expenseService;

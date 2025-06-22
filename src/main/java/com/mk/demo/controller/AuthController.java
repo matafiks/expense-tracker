@@ -1,41 +1,35 @@
 package com.mk.demo.controller;
 
-import com.mk.demo.entity.User;
-import com.mk.demo.service.JwtService;
-import com.mk.demo.service.UserService;
+import com.mk.demo.request.AuthRequest;
+import com.mk.demo.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Authentication REST API endpoints", description = "Operations related to registration and login")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     @Operation(summary = "Register new user")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.save(user);
+    public ResponseEntity<String> register(@Valid @RequestBody AuthRequest authRequest) {
+        authService.register(authRequest);
+        return ResponseEntity.ok("User registered successfully");
     }
 
     @Operation(summary = "Login into an existing account")
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        User dbUser = userService.findByUsername(user.getUsername());
-
-        if (!passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
-        }
-
-        String token = jwtService.generateToken(dbUser);
-        return token;
+    public ResponseEntity<String> login(@Valid @RequestBody AuthRequest authRequest) {
+        return ResponseEntity.ok(authService.login(authRequest));
     }
 }
