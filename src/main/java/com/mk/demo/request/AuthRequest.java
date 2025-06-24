@@ -1,6 +1,6 @@
 package com.mk.demo.request;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -10,11 +10,11 @@ import lombok.Getter;
 @Builder
 public class AuthRequest {
 
-    @NotEmpty(message = "Username is mandatory")
+    @NotBlank(message = "Username is mandatory")
     @Size(min = 3, max = 30, message = "Username must have between 3 and 30 characters")
     private String username;
 
-    @NotEmpty(message = "Password is mandatory")
+    @NotBlank(message = "Password is mandatory")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
             message = """

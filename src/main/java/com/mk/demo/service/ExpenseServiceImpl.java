@@ -3,6 +3,7 @@ package com.mk.demo.service;
 import com.mk.demo.entity.Expense;
 import com.mk.demo.entity.User;
 import com.mk.demo.repository.ExpenseRepository;
+import com.mk.demo.request.ExpenseRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,19 +21,21 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public Expense addExpense(Expense expense) {
+    public void addExpense(ExpenseRequest expenseRequest) {
+        // TODO: fix
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.findByUsername(username);
 
         expense.setUser(user);
 
-        return expenseRepository.save(expense);
+        expenseRepository.save(expense);
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
+        // TODO: check
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.findByUsername(username);
@@ -53,6 +56,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public Expense findById(Long id) {
+        // TODO: fix
         // TODO: make sure expense belongs to logged in user
         // make sure id is valid number
         if (id == null || id < 1) {
@@ -71,6 +75,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public Expense updateExpense(Long id, Expense expenseDetails) {
+        // TODO: fix
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.findByUsername(username);
@@ -92,7 +97,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public List<Expense> findAllByDate(Date date) {
-        //TODO: implement
+        //TODO: fix and implement
         return List.of();
     }
 }

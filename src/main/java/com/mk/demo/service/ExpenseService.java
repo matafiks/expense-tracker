@@ -1,21 +1,22 @@
 package com.mk.demo.service;
 
-import com.mk.demo.entity.Expense;
+import com.mk.demo.request.ExpenseRequest;
+import com.mk.demo.response.ExpenseResponse;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ExpenseService {
 
-    Expense addExpense(Expense expense);
+    void addExpense(ExpenseRequest expenseRequest);
 
-    Expense findById(Long id);
+    ExpenseResponse findById(Long id);
 
-    List<Expense> findAll();
+    List<ExpenseResponse> findAll();
 
     void deleteById(Long id);
 
-    Expense updateExpense(Long id, Expense expenseDetails);
+    ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest);
 
-    List<Expense> findAllByDate(Date date);
+    List<ExpenseResponse> findAllByDate(LocalDate date);
 }

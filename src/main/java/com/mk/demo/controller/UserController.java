@@ -17,6 +17,8 @@ public class UserController {
 
     private final UserService userService;
 
+    // TODO: make sure only admin can do stuff here
+
     @Operation(summary = "Find user by id")
     @GetMapping("/{userId}")
     public User getUser(@PathVariable Long userId) {

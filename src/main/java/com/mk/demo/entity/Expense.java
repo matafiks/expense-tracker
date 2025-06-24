@@ -28,7 +28,7 @@ public class Expense {
     @Column(name = "category", nullable = false)
     private String category;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
