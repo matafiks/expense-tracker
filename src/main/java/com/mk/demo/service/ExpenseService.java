@@ -10,13 +10,13 @@ public interface ExpenseService {
 
     void addExpense(ExpenseRequest expenseRequest);
 
-    ExpenseResponse findById(Long id);
-
+//    ExpenseResponse findById(Long id);
+//
     List<ExpenseResponse> findAll();
-
-    void deleteById(Long id);
-
-    ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest);
-
-    List<ExpenseResponse> findAllByDate(LocalDate date);
+//
+//    void deleteById(Long id);
+//
+//    ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest);
+//
+//    List<ExpenseResponse> findAllByDate(LocalDate date);
 }

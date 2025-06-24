@@ -2,10 +2,15 @@ package com.mk.demo.controller;
 
 
 import com.mk.demo.entity.Expense;
+import com.mk.demo.request.ExpenseRequest;
+import com.mk.demo.response.ExpenseResponse;
 import com.mk.demo.service.ExpenseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,37 +24,37 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @Operation(summary = "Create new expense", description = "Create new expense for a logged in user")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Expense addExpense(@RequestBody Expense expense) {
-        // TODO: fix
-        return expenseService.addExpense(expense);
+    public ResponseEntity<String> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
+        return ResponseEntity.ok("Expense added successfully");
     }
 
-    @Operation(summary = "Delete an expense", description = "Delete an expense based on expenseId")
-    @DeleteMapping("/{expenseId}")
-    public void deleteExpenseById(@PathVariable Long expenseId) {
-        // TODO: check
-        expenseService.deleteById(expenseId);
-    }
-
-    @Operation(summary = "Find an expense by id", description = "Fetch an expense based on expenseId")
-    @GetMapping("/{expenseId}")
-    public Expense findById(@PathVariable Long expenseId) {
-        // TODO: fix
-        return expenseService.findById(expenseId);
-    }
-
+//    @Operation(summary = "Delete an expense", description = "Delete an expense based on expenseId")
+//    @DeleteMapping("/{expenseId}")
+//    public void deleteExpenseById(@PathVariable Long expenseId) {
+//        // TODO: check
+//        expenseService.deleteById(expenseId);
+//    }
+//
+//    @Operation(summary = "Find an expense by id", description = "Fetch an expense based on expenseId")
+//    @GetMapping("/{expenseId}")
+//    public Expense findById(@PathVariable Long expenseId) {
+//        // TODO: fix
+//        return expenseService.findById(expenseId);
+//    }
+//
     @Operation(summary = "List all expenses", description = "Fetch a list of all expenses for a logged in user")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<Expense> findAllExpenses() {
-        // TODO: fix
+    public List<ExpenseResponse> findAllExpenses() {
         return expenseService.findAll();
     }
-
-    @Operation(summary = "Update expense by id", description = "Update expense by expenseId for a logged in user")
-    @PutMapping("/{expenseId}")
-    public Expense updateExpense(@PathVariable Long expenseId, @RequestBody Expense expense) {
-        // TODO: fix
-        return expenseService.updateExpense(expenseId, expense);
-    }
+//
+//    @Operation(summary = "Update expense by id", description = "Update expense by expenseId for a logged in user")
+//    @PutMapping("/{expenseId}")
+//    public Expense updateExpense(@PathVariable Long expenseId, @RequestBody Expense expense) {
+//        // TODO: fix
+//        return expenseService.updateExpense(expenseId, expense);
+//    }
 }
