@@ -10,8 +10,8 @@ public interface ExpenseService {
 
     void addExpense(ExpenseRequest expenseRequest);
 
-//    ExpenseResponse findById(Long id);
-//
+    ExpenseResponse findById(Long id);
+
     List<ExpenseResponse> findAll();
 //
 //    void deleteById(Long id);

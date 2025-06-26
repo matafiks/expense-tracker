@@ -7,11 +7,9 @@ import com.mk.demo.request.ExpenseRequest;
 import com.mk.demo.response.ExpenseResponse;
 import com.mk.demo.util.FindAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,6 +25,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public void addExpense(ExpenseRequest expenseRequest) {
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
+        System.out.println("Authenticate user: " + user.getUsername());
 
         Expense newExpense = Expense.builder()
                 .date(expenseRequest.getDate())
@@ -35,6 +34,8 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .description(expenseRequest.getDescription())
                 .user(user)
                 .build();
+
+        System.out.println("New expense: " + newExpense);
 
         expenseRepository.save(newExpense);
     }
@@ -61,28 +62,36 @@ public class ExpenseServiceImpl implements ExpenseService {
 //        expenseRepository.deleteById(id);
 //    }
 //
-//    @Override
-//    public Expense findById(Long id) {
-//        // TODO: fix
-//        // TODO: make sure expense belongs to logged in user
-//        // make sure id is valid number
-//        if (id == null || id < 1) {
-//            throw new IllegalArgumentException("User id must be greater than 1 and not equal to null");
-//        }
-//
-//        return expenseRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Did not find expense with id: " + id));
-//    }
+    @Override
+    public ExpenseResponse findById(Long id) {
+        // TODO: fix
+        // TODO: make sure expense belongs to logged in user
+        // make sure id is valid number
+        if (id == null || id < 1) {
+            throw new IllegalArgumentException("User id must be greater than 1 and not equal to null");
+        }
+
+        User user = findAuthenticatedUser.getAuthenticatedUser();
+
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expense with ID " + id + " not found"));
+
+        if (!expense.getUser().getUsername().equals(user.getUsername())) {
+            throw new SecurityException("You do not have permission to access this expense");
+        }
+
+        return convertToExpenseResponse(expense);
+    }
 //
     @Override
     public List<ExpenseResponse> findAll() {
-        //TODO: return all expenses only for logged in user
+        //TODO: fix - not returning anything for some reason
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
-        System.out.println(user.toString());
+        System.out.println("Authenticated user: " + user.getUsername().toString());
 
         List<Expense> expenses = expenseRepository.findByUser(user);
-        System.out.println(expenses);
+        System.out.println("His expenses: " + expenses);
 
         return expenseRepository.findByUser(user).stream()
                 .map(this::convertToExpenseResponse)

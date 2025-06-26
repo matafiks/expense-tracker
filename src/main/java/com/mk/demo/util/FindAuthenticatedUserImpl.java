@@ -1,6 +1,7 @@
 package com.mk.demo.util;
 
 import com.mk.demo.entity.User;
+import com.mk.demo.service.CustomUserDetails;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,8 @@ public class FindAuthenticatedUserImpl implements FindAuthenticatedUser {
             throw new AccessDeniedException("Authentication required");
         }
 
-        return (User) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        return userDetails.getUser();
     }
 }

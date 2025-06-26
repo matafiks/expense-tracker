@@ -8,6 +8,7 @@ import com.mk.demo.service.ExpenseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class ExpenseController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<String> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
+        expenseService.addExpense(expenseRequest);
         return ResponseEntity.ok("Expense added successfully");
     }
 
@@ -37,12 +39,13 @@ public class ExpenseController {
 //        expenseService.deleteById(expenseId);
 //    }
 //
-//    @Operation(summary = "Find an expense by id", description = "Fetch an expense based on expenseId")
-//    @GetMapping("/{expenseId}")
-//    public Expense findById(@PathVariable Long expenseId) {
-//        // TODO: fix
-//        return expenseService.findById(expenseId);
-//    }
+    @Operation(summary = "Find an expense by id", description = "Fetch an expense based on expenseId")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{expenseId}")
+    public ResponseEntity<ExpenseResponse> findById(@PathVariable /*@Min(value = 1)*/ Long expenseId) {
+        // TODO: fix
+        return ResponseEntity.ok(expenseService.findById(expenseId));
+    }
 //
     @Operation(summary = "List all expenses", description = "Fetch a list of all expenses for a logged in user")
     @ResponseStatus(HttpStatus.OK)
