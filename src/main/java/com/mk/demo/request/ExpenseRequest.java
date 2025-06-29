@@ -18,7 +18,7 @@ public class ExpenseRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @NotBlank(message = "Amount is mandatory")
+    @NotNull(message = "Amount is mandatory")
     @Digits(integer = 10, fraction = 2, message = "Maximum 10 integer digits and 2 decimal digits allowe")
     private BigDecimal amount;
 

@@ -3,7 +3,6 @@ package com.mk.demo.service;
 import com.mk.demo.request.ExpenseRequest;
 import com.mk.demo.response.ExpenseResponse;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface ExpenseService {
@@ -13,10 +12,8 @@ public interface ExpenseService {
     ExpenseResponse findById(Long id);
 
     List<ExpenseResponse> findAll();
-//
-//    void deleteById(Long id);
-//
-//    ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest);
-//
-//    List<ExpenseResponse> findAllByDate(LocalDate date);
+
+    void deleteById(Long id);
+
+    ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest);
 }

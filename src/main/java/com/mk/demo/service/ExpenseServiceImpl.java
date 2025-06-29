@@ -7,17 +7,19 @@ import com.mk.demo.request.ExpenseRequest;
 import com.mk.demo.response.ExpenseResponse;
 import com.mk.demo.util.FindAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
 
     private final ExpenseRepository expenseRepository;
-    private final UserService userService;
     private final FindAuthenticatedUser findAuthenticatedUser;
 
     @Override
@@ -25,7 +27,6 @@ public class ExpenseServiceImpl implements ExpenseService {
     public void addExpense(ExpenseRequest expenseRequest) {
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
-        System.out.println("Authenticate user: " + user.getUsername());
 
         Expense newExpense = Expense.builder()
                 .date(expenseRequest.getDate())
@@ -40,39 +41,28 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.save(newExpense);
     }
 
-//    @Override
-//    @Transactional
-//    public void deleteById(Long id) {
-//        // TODO: check
-//
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        User user = userService.findByUsername(username);
-//
-//        if (id == null || id < 1) {
-//            throw new IllegalArgumentException("User id must be greater than 1 and not equal to null");
-//        }
-//
-//        Expense expense = expenseRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Expense with was not found with id: " + id));
-//
-//        if (!expense.getUser().getId().equals(user.getId())) {
-//            throw new RuntimeException("Access denied: cannot edit another user's expense");
-//        }
-//
-//        expenseRepository.deleteById(id);
-//    }
-//
     @Override
-    public ExpenseResponse findById(Long id) {
-        // TODO: fix
-        // TODO: make sure expense belongs to logged in user
-        // make sure id is valid number
-        if (id == null || id < 1) {
-            throw new IllegalArgumentException("User id must be greater than 1 and not equal to null");
-        }
+    @Transactional
+    public void deleteById(Long id) {
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
 
+        //TODO: replace with findByIdAndUser
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expense with was not found with id: " + id));
+
+        if (!expense.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied: cannot edit another user's expense");
+        }
+
+        expenseRepository.deleteById(id);
+    }
+
+    @Override
+    public ExpenseResponse findById(Long id) {
+        User user = findAuthenticatedUser.getAuthenticatedUser();
+
+        //TODO: replace with findByIdAndUser
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense with ID " + id + " not found"));
 
@@ -82,51 +72,38 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         return convertToExpenseResponse(expense);
     }
-//
+
     @Override
     public List<ExpenseResponse> findAll() {
-        //TODO: fix - not returning anything for some reason
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
-        System.out.println("Authenticated user: " + user.getUsername().toString());
-
-        List<Expense> expenses = expenseRepository.findByUser(user);
-        System.out.println("His expenses: " + expenses);
 
         return expenseRepository.findByUser(user).stream()
                 .map(this::convertToExpenseResponse)
                 .toList();
-
-//        return expenseRepository.findAll();
     }
-//
-//    @Override
-//    public Expense updateExpense(Long id, Expense expenseDetails) {
-//        // TODO: fix
-//
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        User user = userService.findByUsername(username);
-//
-//        Expense expense = expenseRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Expense with was not found with id: " + id));
-//
-//        if (!expense.getUser().getId().equals(user.getId())) {
-//            throw new RuntimeException("Access denied: cannot edit another user's expense");
-//        }
-//
-//        expense.setAmount(expenseDetails.getAmount());
-//        expense.setCategory(expenseDetails.getCategory());
-//        expense.setDescription(expenseDetails.getDescription());
-//        expense.setDate(expenseDetails.getDate());
-//
-//        return expenseRepository.save(expense);
-//    }
-//
-//    @Override
-//    public List<Expense> findAllByDate(Date date) {
-//        //TODO: fix and implement
-//        return List.of();
-//    }
+
+    @Override
+    @Transactional
+    public ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest) {
+
+        User user = findAuthenticatedUser.getAuthenticatedUser();
+
+        Optional<Expense> expense = expenseRepository.findByIdAndUser(id, user);
+
+        if (expense.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found");
+        }
+
+        expense.get().setAmount(expenseRequest.getAmount());
+        expense.get().setCategory(expenseRequest.getCategory());
+        expense.get().setDescription(expenseRequest.getDescription());
+        expense.get().setDate(expenseRequest.getDate());
+
+        Expense savedExpense = expenseRepository.save(expense.get());
+        
+        return convertToExpenseResponse(savedExpense);
+    }
 
     private ExpenseResponse convertToExpenseResponse(Expense expense) {
         return ExpenseResponse.builder()
