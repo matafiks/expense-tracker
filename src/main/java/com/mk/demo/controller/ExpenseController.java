@@ -26,9 +26,8 @@ public class ExpenseController {
     @Operation(summary = "Create new expense", description = "Create new expense for a logged in user")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseEntity<String> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
-        expenseService.addExpense(expenseRequest);
-        return ResponseEntity.ok("Expense added successfully");
+    public ResponseEntity<ExpenseResponse> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
+        return ResponseEntity.ok(expenseService.addExpense(expenseRequest));
     }
 
     @Operation(summary = "Delete an expense", description = "Delete an expense based on expenseId")

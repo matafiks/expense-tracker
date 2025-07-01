@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ExpenseService {
 
-    void addExpense(ExpenseRequest expenseRequest);
+    ExpenseResponse addExpense(ExpenseRequest expenseRequest);
 
     ExpenseResponse findById(Long id);
 

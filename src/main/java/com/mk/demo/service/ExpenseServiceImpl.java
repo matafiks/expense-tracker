@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public void addExpense(ExpenseRequest expenseRequest) {
+    public ExpenseResponse addExpense(ExpenseRequest expenseRequest) {
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
 
@@ -36,9 +36,8 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .user(user)
                 .build();
 
-        System.out.println("New expense: " + newExpense);
-
         expenseRepository.save(newExpense);
+        return convertToExpenseResponse(newExpense);
     }
 
     @Override
@@ -47,28 +46,19 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
 
-        //TODO: replace with findByIdAndUser
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense with was not found with id: " + id));
+        Expense expense = expenseRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
 
-        if (!expense.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Access denied: cannot edit another user's expense");
-        }
-
-        expenseRepository.deleteById(id);
+        expenseRepository.delete(expense);
     }
 
     @Override
     public ExpenseResponse findById(Long id) {
+
         User user = findAuthenticatedUser.getAuthenticatedUser();
 
-        //TODO: replace with findByIdAndUser
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense with ID " + id + " not found"));
-
-        if (!expense.getUser().getUsername().equals(user.getUsername())) {
-            throw new SecurityException("You do not have permission to access this expense");
-        }
+        Expense expense = expenseRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
 
         return convertToExpenseResponse(expense);
     }
@@ -89,26 +79,24 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         User user = findAuthenticatedUser.getAuthenticatedUser();
 
-        Optional<Expense> expense = expenseRepository.findByIdAndUser(id, user);
+        Expense expense = expenseRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
 
-        if (expense.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found");
-        }
+        expense.setAmount(expenseRequest.getAmount());
+        expense.setCategory(expenseRequest.getCategory());
+        expense.setDescription(expenseRequest.getDescription());
+        expense.setDate(expenseRequest.getDate());
 
-        expense.get().setAmount(expenseRequest.getAmount());
-        expense.get().setCategory(expenseRequest.getCategory());
-        expense.get().setDescription(expenseRequest.getDescription());
-        expense.get().setDate(expenseRequest.getDate());
-
-        Expense savedExpense = expenseRepository.save(expense.get());
+        expenseRepository.save(expense);
         
-        return convertToExpenseResponse(savedExpense);
+        return convertToExpenseResponse(expense);
     }
 
     private ExpenseResponse convertToExpenseResponse(Expense expense) {
         return ExpenseResponse.builder()
                 .id(expense.getId())
                 .date(expense.getDate())
+                .amount(expense.getAmount())
                 .category(expense.getCategory())
                 .description(expense.getDescription())
                 .build();
