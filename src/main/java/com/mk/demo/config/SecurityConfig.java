@@ -25,6 +25,7 @@ public class SecurityConfig {
                                 // allow full access to /api/auth/** and swagger to anyone
                                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**",
                                         "/swagger-resources/**", "/webjars/**", "/docs").permitAll()
+                                .requestMatchers("/admin/users/**").hasRole("ADMIN")
                                 // deny access for not authenticated users to all other endpoints
                                 .anyRequest().authenticated()
                 );

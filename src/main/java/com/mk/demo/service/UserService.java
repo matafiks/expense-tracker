@@ -1,19 +1,14 @@
 package com.mk.demo.service;
 
-import com.mk.demo.entity.User;
+import com.mk.demo.response.UserResponse;
 
 import java.util.List;
 
 public interface UserService {
 
-    User save(User user);
+    UserResponse findById(Long id);
 
-    User findById(Long id);
-
-    List<User> findAll();
+    List<UserResponse> findAll();
 
     void deleteById(Long id);
-
-    User findByUsername(String username);
-
 }
