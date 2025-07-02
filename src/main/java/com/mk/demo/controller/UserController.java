@@ -1,11 +1,13 @@
 package com.mk.demo.controller;
 
-import com.mk.demo.entity.User;
+import com.mk.demo.response.UserResponse;
 import com.mk.demo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,28 +15,30 @@ import java.util.List;
 @Tag(name = "User REST API endpoints", description = "Operations related to user accounts")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/admin/users")
 public class UserController {
 
     private final UserService userService;
 
-    // TODO: fix and make sure only admin can do stuff here
-
     @Operation(summary = "Find user by id")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable @Min(1) Long userId) {
-        return userService.findById(userId);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable @Min(1) Long userId) {
+        return ResponseEntity.ok(userService.findById(userId));
     }
 
     @Operation(summary = "List all existing users")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<User> findAllUsers() {
-        return userService.findAll();
+    public ResponseEntity<List<UserResponse>> findAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @Operation(summary = "Delete user by id")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable @Min(1) Long userId) {
+    public ResponseEntity<String> deleteUserById(@PathVariable @Min(1) Long userId) {
         userService.deleteById(userId);
+        return ResponseEntity.ok("User with id: " + userId + " has been deleted successfully");
     }
 }
