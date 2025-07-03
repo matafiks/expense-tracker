@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -69,6 +70,26 @@ public class ExpenseServiceImpl implements ExpenseService {
         User user = findAuthenticatedUser.getAuthenticatedUser();
 
         return expenseRepository.findByUser(user).stream()
+                .map(this::convertToExpenseResponse)
+                .toList();
+    }
+
+    @Override
+    public List<ExpenseResponse> findAllByCategory(String category) {
+
+        User user = findAuthenticatedUser.getAuthenticatedUser();
+
+        return expenseRepository.findByUserAndCategoryIgnoreCase(user, category).stream()
+                .map(this::convertToExpenseResponse)
+                .toList();
+    }
+
+    @Override
+    public List<ExpenseResponse> findAllByDate(LocalDate localDate) {
+
+        User user = findAuthenticatedUser.getAuthenticatedUser();
+
+        return expenseRepository.findByUserAndDate(user, localDate).stream()
                 .map(this::convertToExpenseResponse)
                 .toList();
     }

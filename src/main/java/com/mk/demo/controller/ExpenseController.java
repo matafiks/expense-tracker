@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Expense REST API endpoints", description = "Operations related to expensions")
@@ -51,6 +52,22 @@ public class ExpenseController {
     public List<ExpenseResponse> findAllExpenses() {
         return expenseService.findAll();
     }
+
+    // TODO: fix - cant have same endpoints
+
+    /*@Operation(summary = "List all expenses by category", description = "Fetch a list of all expenses for a logged in user filtered by a category")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{category}")
+    public List<ExpenseResponse> findAllExpensesByCategory(@PathVariable String category) {
+        return expenseService.findAllByCategory(category);
+    }
+
+    @Operation(summary = "List all expenses by date", description = "Fetch a list of all expenses for a logged in user filtered by a date")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{localDate}")
+    public List<ExpenseResponse> findAllExpensesByCategory(@PathVariable LocalDate localDate) {
+        return expenseService.findAllByDate(localDate);
+    }*/
 
     @Operation(summary = "Update expense by id", description = "Update expense by expenseId for a logged in user")
     @ResponseStatus(HttpStatus.OK)
