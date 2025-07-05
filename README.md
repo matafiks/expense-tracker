@@ -10,7 +10,7 @@ This project is primarily for learning purposes and is part of my personal portf
 - Spring Boot 3.4.5
 - Spring Security (JWT authentication)
 - JPA + Hibernate
-- MySQL
+- Postgresql
 - Lombok
 - JUnit 5
 - Git
@@ -20,7 +20,7 @@ This project is primarily for learning purposes and is part of my personal portf
 - User registration and login
 - JWT-based authentication and authorization
 - CRUD operations for expenses
-- Filter expenses by date
+- Filter expenses by category and date
 - Swagger UI documentation
 
 ## Author
