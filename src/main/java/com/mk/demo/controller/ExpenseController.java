@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Expense REST API endpoints", description = "Operations related to expensions")
@@ -48,8 +49,19 @@ public class ExpenseController {
     @Operation(summary = "List all expenses", description = "Fetch a list of all expenses for a logged in user")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<ExpenseResponse> findAllExpenses() {
-        return expenseService.findAll();
+    public List<ExpenseResponse> findAllExpenses(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) LocalDate date
+    ) {
+        if (category != null && date == null) {
+            return expenseService.findAllByCategory(category);
+        } else if (category == null && date != null) {
+            return expenseService.findAllByDate(date);
+        } else if (category != null && date != null) {
+            return expenseService.findAllByCategoryAndDate(category, date);
+        } else {
+            return expenseService.findAll();
+        }
     }
 
     @Operation(summary = "Update expense by id", description = "Update expense by expenseId for a logged in user")
