@@ -49,25 +49,20 @@ public class ExpenseController {
     @Operation(summary = "List all expenses", description = "Fetch a list of all expenses for a logged in user")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<ExpenseResponse> findAllExpenses() {
-        return expenseService.findAll();
+    public List<ExpenseResponse> findAllExpenses(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) LocalDate date
+    ) {
+        if (category != null && date == null) {
+            return expenseService.findAllByCategory(category);
+        } else if (category == null && date != null) {
+            return expenseService.findAllByDate(date);
+        } else if (category != null && date != null) {
+            return expenseService.findAllByCategoryAndDate(category, date);
+        } else {
+            return expenseService.findAll();
+        }
     }
-
-    // TODO: fix - cant have same endpoints
-
-    /*@Operation(summary = "List all expenses by category", description = "Fetch a list of all expenses for a logged in user filtered by a category")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{category}")
-    public List<ExpenseResponse> findAllExpensesByCategory(@PathVariable String category) {
-        return expenseService.findAllByCategory(category);
-    }
-
-    @Operation(summary = "List all expenses by date", description = "Fetch a list of all expenses for a logged in user filtered by a date")
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{localDate}")
-    public List<ExpenseResponse> findAllExpensesByCategory(@PathVariable LocalDate localDate) {
-        return expenseService.findAllByDate(localDate);
-    }*/
 
     @Operation(summary = "Update expense by id", description = "Update expense by expenseId for a logged in user")
     @ResponseStatus(HttpStatus.OK)

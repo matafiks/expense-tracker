@@ -18,6 +18,8 @@ public interface ExpenseService {
 
     List<ExpenseResponse> findAllByDate(LocalDate localDate);
 
+    List<ExpenseResponse> findAllByCategoryAndDate(String category, LocalDate localDate);
+
     void deleteById(Long id);
 
     ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest);

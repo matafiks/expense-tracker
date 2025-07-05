@@ -23,6 +23,11 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final FindAuthenticatedUser findAuthenticatedUser;
 
+    /**
+     * Dodanie nowego wydatku w formie ExpenseRequest przez zalogowanego użytkownika
+     * @param expenseRequest
+     * @return Zwraca dane podane przez użytkownika oraz potwierdzenie
+     */
     @Override
     @Transactional
     public ExpenseResponse addExpense(ExpenseRequest expenseRequest) {
@@ -41,6 +46,10 @@ public class ExpenseServiceImpl implements ExpenseService {
         return convertToExpenseResponse(newExpense);
     }
 
+    /**
+     * Usunięcie dodatku po jego id z bazy danych przez zalogowanego użytkownika
+     * @param id
+     */
     @Override
     @Transactional
     public void deleteById(Long id) {
@@ -53,6 +62,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.delete(expense);
     }
 
+    /**
+     * Wyszukiwanie wydatku po id przez zalogowanego użytkownika
+     * @param id
+     * @return Zwraca wskazany wydatek
+     */
     @Override
     public ExpenseResponse findById(Long id) {
 
@@ -64,6 +78,10 @@ public class ExpenseServiceImpl implements ExpenseService {
         return convertToExpenseResponse(expense);
     }
 
+    /**
+     * Wyszukiwanie wszystkich wydatków zalogowanego użytkownika
+     * @return Zwraca listę wydatków użytkownika
+     */
     @Override
     public List<ExpenseResponse> findAll() {
 
@@ -74,6 +92,11 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .toList();
     }
 
+    /**
+     * Wyszukiwanie wszystkich wydatków zalogowanego użytkownika (filtrowanie po kategorii)
+     * @param category
+     * @return Zwraca listę wydatków użytkownika (tylko z konkretnej kategorii)
+     */
     @Override
     public List<ExpenseResponse> findAllByCategory(String category) {
 
@@ -84,6 +107,11 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .toList();
     }
 
+    /**
+     * Wyszukiwanie wszystkich wydatków zalogowanego użytkownika (filtrowanie po dacie)
+     * @param localDate
+     * @return Zwraca listę wydatków użytkownika (tylko o konkretnej dacie)
+     */
     @Override
     public List<ExpenseResponse> findAllByDate(LocalDate localDate) {
 
@@ -94,6 +122,27 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .toList();
     }
 
+    /**
+     * Wyszukiwanie wszystkich wydatków zalogowanego użytkownika (filtrowanie po kategorii oraz dacie)
+     * @param category
+     * @param localDate
+     * @return Zwraca listę wydatków użytkownika (tylko ze wskazanej kategorii oraz konkretnej dacie)
+     */
+    public List<ExpenseResponse> findAllByCategoryAndDate(String category, LocalDate localDate) {
+
+        User user = findAuthenticatedUser.getAuthenticatedUser();
+
+        return expenseRepository.findByUserAndCategoryAndDate(user, category, localDate).stream()
+                .map(this::convertToExpenseResponse)
+                .toList();
+    }
+
+    /**
+     * Edycja wskazanego przez id wydatku
+     * @param id
+     * @param expenseRequest
+     * @return Zwraca dane edytowanego wydatku
+     */
     @Override
     @Transactional
     public ExpenseResponse updateExpense(Long id, ExpenseRequest expenseRequest) {
@@ -113,6 +162,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         return convertToExpenseResponse(expense);
     }
 
+    /**
+     * Metoda pomocnicza do konwersji encji Expense na ExpenseResponse (ukrycie niektórych pól)
+     * @param expense
+     * @return Zwraca ExpenseResponse
+     */
     private ExpenseResponse convertToExpenseResponse(Expense expense) {
         return ExpenseResponse.builder()
                 .id(expense.getId())

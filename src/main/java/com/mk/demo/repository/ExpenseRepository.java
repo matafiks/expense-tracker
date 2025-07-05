@@ -16,4 +16,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findByUserAndCategoryIgnoreCase(User user, String category);
 
     List<Expense> findByUserAndDate(User user, LocalDate date);
+
+    List<Expense> findByUserAndCategory(User user, String category);
+
+    List<Expense> findByUserAndCategoryAndDate(User user, String category, LocalDate date);
 }
